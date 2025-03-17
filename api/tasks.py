@@ -22,11 +22,13 @@ def send_maintenance_reminders():
             reminders.append("- Taille")
 
         if reminders:
+            subject = f"Rappel d'entretien pour {plant.name}"
+            message = "Il est temps de s'occuper de votre plante :\n" + \
+                "\n".join(reminders)
             send_mail(
-                subject=f"Rappel d'entretien pour {
-                    plant.name}",
-                message="Il est temps de s'occuper de votre plante :\n" +
-                "\n".join(reminders),
+                subject=subject,
+                message=message,
                 from_email="no-reply@plantes.com",
                 recipient_list=["user@example.com"],
-                fail_silently=True)
+                fail_silently=True
+            )
