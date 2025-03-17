@@ -52,13 +52,18 @@ class PlantSerializerTest(TestCase):
         """ Vérifie que le serializer fonctionne avec des données valides """
         serializer = PlantSerializer(instance=self.plant)
 
-        expected_created_at = self.plant.created_at.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        expected_created_at = self. \
+            plant. \
+            created_at. \
+            replace(microsecond=0). \
+            isoformat(). \
+            replace("+00:00", "Z")
         actual_created_at = serializer.data["created_at"]
 
         self.assertEqual(actual_created_at, expected_created_at)
 
     def test_serializer_invalid_data(self):
-        """ Vérifie que le serializer renvoie une erreur pour un nom trop court """
+        """ Vérifie que le serializer renvoie une erreur pour un nom court """
         invalid_data = {"name": "Te"}  # Nom trop court (<3 caractères)
         serializer = PlantSerializer(data=invalid_data)
         self.assertFalse(serializer.is_valid())
@@ -71,21 +76,37 @@ class PlantAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.client.force_authenticate(user=self.user)
 
         self.plant1 = Plant.objects.create(
-            name="Ficus Lyrata", variety="Fiddle Leaf", plant_type="indoor",
-            purchase_date=date(2023, 3, 10), location="Bureau", description="Arbre d'intérieur populaire."
-        )
+            name="Ficus Lyrata",
+            variety="Fiddle Leaf",
+            plant_type="indoor",
+            purchase_date=date(
+                2023,
+                3,
+                10),
+            location="Bureau",
+            description="Arbre d'intérieur populaire.")
 
         self.plant2 = Plant.objects.create(
-            name="Monstera Deliciosa", variety="Variegata", plant_type="indoor",
-            purchase_date=date(2023, 4, 15), location="Salon", description="Plante tropicale."
-        )
+            name="Monstera Deliciosa",
+            variety="Variegata",
+            plant_type="indoor",
+            purchase_date=date(
+                2023,
+                4,
+                15),
+            location="Salon",
+            description="Plante tropicale.")
 
         self.list_url = reverse("plant-list")
-        self.detail_url = reverse("plant-detail", kwargs={"pk": self.plant1.id})
+        self.detail_url = reverse(
+            "plant-detail",
+            kwargs={
+                "pk": self.plant1.id})
 
     def test_get_all_plants(self):
         """ Vérifie que la liste des plantes est retournée correctement """
@@ -131,7 +152,8 @@ class PlantAPITest(TestCase):
             "location": "Bureau",
             "description": "Plante d'intérieur imposante."
         }
-        response = self.client.put(self.detail_url, updated_data, format="json")
+        response = self.client.put(
+            self.detail_url, updated_data, format="json")
 
         self.plant1.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
