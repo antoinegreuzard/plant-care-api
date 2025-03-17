@@ -1,16 +1,14 @@
 from rest_framework import serializers
-from .models import Item
+from .models import Plant
 
 
-class ItemSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=255)
-
+class PlantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Item
+        model = Plant
         fields = '__all__'
 
     def validate_name(self, value):
-        """ Empêche les noms trop courts """
+        """ Vérifie que le nom est suffisamment long """
         if len(value) < 3:
             raise serializers.ValidationError(
                 "Le nom doit contenir au moins 3 caractères.")
