@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Plant
 from .serializers import PlantSerializer
-from datetime import date
+from datetime import date, timedelta
+from .tasks import send_maintenance_reminders
 
 
 class PlantModelTest(TestCase):
@@ -177,3 +179,18 @@ class PlantURLTests(TestCase):
 
         self.assertEqual(list_url, "/api/plants/")
         self.assertEqual(detail_url, "/api/plants/1/")
+
+
+class MaintenanceReminderTest(TestCase):
+    def setUp(self):
+        self.plant = Plant.objects.create(
+            name="Cactus",
+            last_watering=date.today() - timedelta(days=7),
+            watering_frequency=7,
+        )
+
+    def test_send_maintenance_reminder(self):
+        """ Vérifie que l'email est bien envoyé """
+        send_maintenance_reminders()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Rappel d'entretien", mail.outbox[0].subject)
