@@ -1,6 +1,8 @@
 # 🚀 Plant Care API
 
-Une API Django pour gérer des ressources avec Django REST Framework.
+Une API Django pour gérer un catalogue personnalisé de plantes avec des fonctionnalités avancées comme un calendrier d'entretien automatisé et un journal de suivi visuel.
+
+---
 
 ## 📦 Installation
 
@@ -22,7 +24,12 @@ Une API Django pour gérer des ressources avec Django REST Framework.
    python manage.py migrate
    ```
 
-4. **Lancer le serveur**
+4. **Créer un superutilisateur (optionnel)**
+   ```sh
+   python manage.py createsuperuser
+   ```
+
+5. **Lancer le serveur**
    ```sh
    python manage.py runserver
    ```
@@ -33,13 +40,35 @@ L'API est accessible sur `http://127.0.0.1:8000/api/`.
 
 ## 📡 Endpoints de l'API
 
-| Méthode  | Endpoint           | Description                  |
-|----------|--------------------|------------------------------|
-| `GET`    | `/api/items/`      | Récupérer tous les items     |
-| `POST`   | `/api/items/`      | Créer un item                |
-| `GET`    | `/api/items/{id}/` | Récupérer un item spécifique |
-| `PUT`    | `/api/items/{id}/` | Modifier un item             |
-| `DELETE` | `/api/items/{id}/` | Supprimer un item            |
+### 🌿 Gestion des plantes
+
+| Méthode  | Endpoint            | Description                     |
+|----------|---------------------|---------------------------------|
+| `GET`    | `/api/plants/`      | Récupérer toutes les plantes    |
+| `POST`   | `/api/plants/`      | Ajouter une nouvelle plante     |
+| `GET`    | `/api/plants/{id}/` | Récupérer une plante spécifique |
+| `PUT`    | `/api/plants/{id}/` | Modifier une plante existante   |
+| `DELETE` | `/api/plants/{id}/` | Supprimer une plante            |
+
+### 📷 Suivi visuel des plantes
+
+| Méthode | Endpoint                         | Description                       |
+|---------|----------------------------------|-----------------------------------|
+| `POST`  | `/api/plants/{id}/upload-photo/` | Ajouter une photo à une plante    |
+| `GET`   | `/api/plants/{id}/photos/`       | Récupérer les photos d’une plante |
+
+### 🔔 Rappels et notifications d'entretien
+
+| Méthode | Endpoint                      | Description                           |
+|---------|-------------------------------|---------------------------------------|
+| `GET`   | `/api/plants/{id}/reminders/` | Récupérer les prochains entretiens    |
+| `POST`  | `/api/plants/send-reminders/` | Envoyer des rappels par email (Admin) |
+
+### 📝 Conseils d’entretien personnalisés
+
+| Méthode | Endpoint                   | Description                        |
+|---------|----------------------------|------------------------------------|
+| `GET`   | `/api/plants/{id}/advice/` | Obtenir des conseils personnalisés |
 
 ---
 
@@ -52,14 +81,14 @@ L'API est accessible sur `http://127.0.0.1:8000/api/`.
 
 2. **Tester avec `curl`**
    ```sh
-   curl -X GET http://127.0.0.1:8000/api/items/
+   curl -X GET http://127.0.0.1:8000/api/plants/
    ```
 
 ---
 
 ## 🛠 CI/CD avec GitHub Actions
 
-Ce projet utilise GitHub Actions pour vérifier automatiquement :
+Ce projet utilise **GitHub Actions** pour automatiser :
 
 - L’installation des dépendances
 - La qualité du code avec `flake8`
@@ -69,4 +98,4 @@ Ce projet utilise GitHub Actions pour vérifier automatiquement :
 
 ## 📜 Licence
 
-Ce projet est sous licence MIT. 📝
+Ce projet est sous licence **MIT**. 📝
