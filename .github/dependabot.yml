@@ -13,9 +13,6 @@ updates:
     labels:
       - "dependencies"
       - "django"
-    ignore:
-      - dependency-name: "django"
-        versions: ["4.0", "4.1"]  # Ignore certaines versions si nécessaire
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
