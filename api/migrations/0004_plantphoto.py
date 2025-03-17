@@ -14,11 +14,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PlantPhoto',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='plant_photos/')),
-                ('caption', models.CharField(blank=True, max_length=255, null=True, verbose_name='Légende')),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True, verbose_name='Date de téléversement')),
-                ('plant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='photos', to='api.plant')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('image',
+                 models.ImageField(
+                     upload_to='plant_photos/')),
+                ('caption',
+                 models.CharField(
+                     blank=True,
+                     max_length=255,
+                     null=True,
+                     verbose_name='Légende')),
+                ('uploaded_at',
+                 models.DateTimeField(
+                     auto_now_add=True,
+                     verbose_name='Date de téléversement')),
+                ('plant',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='photos',
+                     to='api.plant')),
             ],
             options={
                 'verbose_name': 'Photo de Plante',

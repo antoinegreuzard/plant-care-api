@@ -51,3 +51,9 @@ class PlantPhotoSerializer(serializers.ModelSerializer):
         model = PlantPhoto
         fields = '__all__'
         read_only_fields = ['uploaded_at']
+
+    def create(self, validated_data):
+        """ Ajoute la plante automatiquement depuis la requête """
+        plant_id = self.context['view'].kwargs.get('pk')
+        validated_data['plant'] = Plant.objects.get(pk=plant_id)
+        return super().create(validated_data)
