@@ -1,5 +1,9 @@
 name: Django CI
 
+permissions:
+    contents: read  # Donne seulement l'accès en lecture au code source
+    pull-requests: write  # Permet d'ajouter des commentaires sur les PRs (si besoin)
+
 on:
     push:
         branches:
@@ -38,6 +42,7 @@ jobs:
                   source env/bin/activate
                   pip install --upgrade pip
                   pip install -r requirements.txt
+                  pip install djangorestframework-simplejwt
 
             - name: Vérifier la syntaxe avec flake8
               run: |
