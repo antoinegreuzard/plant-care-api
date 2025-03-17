@@ -1,5 +1,6 @@
+from datetime import timedelta
+
 from django.db import models
-from datetime import timedelta, date
 
 
 class Plant(models.Model):
@@ -63,19 +64,27 @@ class Plant(models.Model):
     def next_watering(self):
         """ Retourne la date du prochain arrosage """
         return self.last_watering + \
-            timedelta(days=self.watering_frequency) if self.last_watering else None
+            timedelta(days=self.watering_frequency) \
+            if self.last_watering \
+            else None
 
     def next_fertilizing(self):
         """ Retourne la date de la prochaine fertilisation """
         return self.last_fertilizing + \
-            timedelta(days=self.fertilizing_frequency) if self.last_fertilizing else None
+            timedelta(days=self.fertilizing_frequency) \
+            if self.last_fertilizing \
+            else None
 
     def next_repotting(self):
         """ Retourne la date du prochain rempotage """
         return self.last_repotting + \
-            timedelta(days=self.repotting_frequency) if self.last_repotting else None
+            timedelta(days=self.repotting_frequency) \
+            if self.last_repotting \
+            else None
 
     def next_pruning(self):
         """ Retourne la date de la prochaine taille """
         return self.last_pruning + \
-            timedelta(days=self.pruning_frequency) if self.last_pruning else None
+            timedelta(days=self.pruning_frequency) \
+            if self.last_pruning \
+            else None
