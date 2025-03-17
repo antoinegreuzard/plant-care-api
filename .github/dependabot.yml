@@ -1,0 +1,21 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "pip"  # Django utilise pip pour gérer les dépendances
+    directory: "/"  # Emplacement du fichier requirements.txt à la racine
+    schedule:
+      interval: "weekly"  # Vérification des mises à jour chaque semaine
+    open-pull-requests-limit: 5  # Limite le nombre de PR ouvertes simultanément
+    labels:
+      - "dependencies"
+      - "django"
+    ignore:
+      - dependency-name: "django"
+        versions: ["4.0", "4.1"]  # Ignore certaines versions si nécessaire
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
