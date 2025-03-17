@@ -7,7 +7,7 @@ from .serializers import ItemSerializer
 
 
 class ItemPagination(PageNumberPagination):
-    page_size = 5  # Nombre d'éléments par page
+    page_size = 5
 
 
 class ItemListCreateView(generics.ListCreateAPIView):
