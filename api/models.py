@@ -140,6 +140,8 @@ class PlantPhoto(models.Model):
         verbose_name_plural = "Photos de Plantes"
 
     def __str__(self):
-        return f"Photo de {
-            self.plant.name} - {
-            self.uploaded_at.strftime('%Y-%m-%d')}"
+        return (
+            f"Photo de {self.plant.name}"
+            f" - "
+            f"{self.uploaded_at.strftime('%Y-%m-%d')}"
+        )
