@@ -12,21 +12,32 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='item',
-            options={'ordering': ['-created_at'], 'verbose_name': 'Objet', 'verbose_name_plural': 'Objets'},
+            options={
+                'ordering': ['-created_at'],
+                'verbose_name': 'Objet',
+                'verbose_name_plural': 'Objets'},
         ),
         migrations.AlterField(
             model_name='item',
             name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Date de création'),
+            field=models.DateTimeField(
+                auto_now_add=True,
+                verbose_name='Date de création'),
         ),
         migrations.AlterField(
             model_name='item',
             name='description',
-            field=models.TextField(blank=True, null=True, verbose_name='Description'),
+            field=models.TextField(
+                blank=True,
+                null=True,
+                verbose_name='Description'),
         ),
         migrations.AlterField(
             model_name='item',
             name='name',
-            field=models.CharField(max_length=255, unique=True, verbose_name='Nom'),
+            field=models.CharField(
+                max_length=255,
+                unique=True,
+                verbose_name='Nom'),
         ),
     ]

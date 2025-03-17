@@ -12,7 +12,8 @@ class ItemModelTest(TestCase):
     """ Tests pour le modèle Item """
 
     def setUp(self):
-        self.item = Item.objects.create(name="Test Item", description="Ceci est un test")
+        self.item = Item.objects.create(
+            name="Test Item", description="Ceci est un test")
 
     def test_item_creation(self):
         """ Vérifie que l'objet est bien créé """
@@ -28,26 +29,21 @@ class ItemSerializerTest(TestCase):
     """ Tests pour le serializer ItemSerializer """
 
     def setUp(self):
-        self.item = Item.objects.create(name="Test Item", description="Ceci est un test")
+        self.item = Item.objects.create(
+            name="Test Item", description="Ceci est un test")
 
     def test_serializer_valid_data(self):
         """ Vérifie que le serializer fonctionne avec des données valides """
         serializer = ItemSerializer(instance=self.item)
 
-        expected_created_at = self.item.created_at.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        expected_created_at = self.item.created_at.replace(
+            microsecond=0).isoformat().replace("+00:00", "Z")
         actual_created_at = serializer.data["created_at"]
-
-        expected_data = {
-            "id": self.item.id,
-            "name": "Test Item",
-            "description": "Ceci est un test",
-            "created_at": expected_created_at
-        }
 
         self.assertEqual(actual_created_at, expected_created_at)
 
     def test_serializer_invalid_data(self):
-        """ Vérifie que le serializer renvoie une erreur avec des données invalides """
+        """ Vérifie que le serializer renvoie une erreur """
         invalid_data = {"name": "Te"}  # Nom trop court (<3 caractères)
         serializer = ItemSerializer(data=invalid_data)
         self.assertFalse(serializer.is_valid())
@@ -60,11 +56,14 @@ class ItemAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.client.force_authenticate(user=self.user)
 
-        self.item1 = Item.objects.create(name="Item 1", description="Description 1")
-        self.item2 = Item.objects.create(name="Item 2", description="Description 2")
+        self.item1 = Item.objects.create(
+            name="Item 1", description="Description 1")
+        self.item2 = Item.objects.create(
+            name="Item 2", description="Description 2")
         self.list_url = reverse("item-list")
         self.detail_url = reverse("item-detail", kwargs={"pk": self.item1.id})
 
@@ -97,8 +96,11 @@ class ItemAPITest(TestCase):
 
     def test_update_item(self):
         """ Vérifie que la mise à jour d'un item fonctionne """
-        updated_data = {"name": "Item modifié", "description": "Nouvelle description"}
-        response = self.client.put(self.detail_url, updated_data, format="json")
+        updated_data = {
+            "name": "Item modifié",
+            "description": "Nouvelle description"}
+        response = self.client.put(
+            self.detail_url, updated_data, format="json")
 
         self.item1.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)

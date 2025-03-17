@@ -42,7 +42,7 @@ jobs:
               run: |
                   source env/bin/activate
                   pip install flake8
-                  flake8 .
+                  flake8 api/
 
             - name: Exécuter les tests Django
               env:
