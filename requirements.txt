@@ -1,3 +1,4 @@
-django>=5.1
+django>=5.1.7
 djangorestframework>=3.15
 djangorestframework-simplejwt >=5.5
+pillow>=11.1

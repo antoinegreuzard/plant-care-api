@@ -1,3 +1,8 @@
+from io import BytesIO
+
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
@@ -6,7 +11,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from .helpers import get_personalized_advice
-from .models import Plant
+from .models import Plant, PlantPhoto
 from .serializers import PlantSerializer
 from datetime import date, timedelta
 from .tasks import send_maintenance_reminders
@@ -219,3 +224,49 @@ class PersonalizedAdviceTest(TestCase):
 
         for expected in expected_advice:
             self.assertIn(expected, advice)
+
+
+class PlantPhotoTest(TestCase):
+    """ Teste l’upload des photos de plantes """
+
+    def setUp(self):
+        self.client = APIClient()
+
+        # 🔹 Créer un utilisateur et l'authentifier pour éviter l'erreur 401
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
+        self.client.force_authenticate(user=self.user)
+
+        # 🔹 Créer une plante pour le test d'upload
+        self.plant = Plant.objects.create(
+            name="Monstera",
+            sunlight_level="medium",
+            temperature=18,
+            humidity_level="medium"
+        )
+
+    def generate_photo_file(self):
+        """ 🔹 Génère une image en mémoire pour l'upload """
+        image = Image.new(
+            'RGB', (100, 100), color='red')  # Génère une image rouge
+        image_io = BytesIO()
+        image.save(image_io, format='JPEG')
+        image_io.seek(0)
+        return SimpleUploadedFile(
+            "test.jpg",
+            image_io.read(),
+            content_type="image/jpeg")
+
+    def test_upload_photo(self):
+        """ Vérifie que l’upload de photo fonctionne """
+        url = reverse("plant-upload-photo", kwargs={"pk": self.plant.id})
+
+        # 🔹 Utilisation d'une image générée en mémoire
+        image = self.generate_photo_file()
+
+        data = {"plant": self.plant.id, "image": image}
+        response = self.client.post(url, data, format="multipart")
+
+        # 🔹 Vérification de la réponse attendue
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(PlantPhoto.objects.filter(plant=self.plant).exists())

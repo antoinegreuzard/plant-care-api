@@ -117,3 +117,31 @@ class Plant(models.Model):
             timedelta(days=self.pruning_frequency) \
             if self.last_pruning \
             else None
+
+
+class PlantPhoto(models.Model):
+    plant = models.ForeignKey(
+        Plant,
+        on_delete=models.CASCADE,
+        related_name="photos")
+    image = models.ImageField(upload_to="plant_photos/")
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Légende")
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de téléversement")
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+        verbose_name = "Photo de Plante"
+        verbose_name_plural = "Photos de Plantes"
+
+    def __str__(self):
+        return (
+            f"Photo de {self.plant.name}"
+            f" - "
+            f"{self.uploaded_at.strftime('%Y-%m-%d')}"
+        )
