@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Plant
 from .serializers import PlantSerializer
-from datetime import date
+from datetime import date, timedelta
+from .tasks import send_maintenance_reminders
 
 
 class PlantModelTest(TestCase):
@@ -52,13 +54,18 @@ class PlantSerializerTest(TestCase):
         """ Vérifie que le serializer fonctionne avec des données valides """
         serializer = PlantSerializer(instance=self.plant)
 
-        expected_created_at = self.plant.created_at.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        expected_created_at = self. \
+            plant. \
+            created_at. \
+            replace(microsecond=0). \
+            isoformat(). \
+            replace("+00:00", "Z")
         actual_created_at = serializer.data["created_at"]
 
         self.assertEqual(actual_created_at, expected_created_at)
 
     def test_serializer_invalid_data(self):
-        """ Vérifie que le serializer renvoie une erreur pour un nom trop court """
+        """ Vérifie que le serializer renvoie une erreur pour un nom court """
         invalid_data = {"name": "Te"}  # Nom trop court (<3 caractères)
         serializer = PlantSerializer(data=invalid_data)
         self.assertFalse(serializer.is_valid())
@@ -71,21 +78,37 @@ class PlantAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.client.force_authenticate(user=self.user)
 
         self.plant1 = Plant.objects.create(
-            name="Ficus Lyrata", variety="Fiddle Leaf", plant_type="indoor",
-            purchase_date=date(2023, 3, 10), location="Bureau", description="Arbre d'intérieur populaire."
-        )
+            name="Ficus Lyrata",
+            variety="Fiddle Leaf",
+            plant_type="indoor",
+            purchase_date=date(
+                2023,
+                3,
+                10),
+            location="Bureau",
+            description="Arbre d'intérieur populaire.")
 
         self.plant2 = Plant.objects.create(
-            name="Monstera Deliciosa", variety="Variegata", plant_type="indoor",
-            purchase_date=date(2023, 4, 15), location="Salon", description="Plante tropicale."
-        )
+            name="Monstera Deliciosa",
+            variety="Variegata",
+            plant_type="indoor",
+            purchase_date=date(
+                2023,
+                4,
+                15),
+            location="Salon",
+            description="Plante tropicale.")
 
         self.list_url = reverse("plant-list")
-        self.detail_url = reverse("plant-detail", kwargs={"pk": self.plant1.id})
+        self.detail_url = reverse(
+            "plant-detail",
+            kwargs={
+                "pk": self.plant1.id})
 
     def test_get_all_plants(self):
         """ Vérifie que la liste des plantes est retournée correctement """
@@ -131,7 +154,8 @@ class PlantAPITest(TestCase):
             "location": "Bureau",
             "description": "Plante d'intérieur imposante."
         }
-        response = self.client.put(self.detail_url, updated_data, format="json")
+        response = self.client.put(
+            self.detail_url, updated_data, format="json")
 
         self.plant1.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -155,3 +179,18 @@ class PlantURLTests(TestCase):
 
         self.assertEqual(list_url, "/api/plants/")
         self.assertEqual(detail_url, "/api/plants/1/")
+
+
+class MaintenanceReminderTest(TestCase):
+    def setUp(self):
+        self.plant = Plant.objects.create(
+            name="Cactus",
+            last_watering=date.today() - timedelta(days=7),
+            watering_frequency=7,
+        )
+
+    def test_send_maintenance_reminder(self):
+        """ Vérifie que l'email est bien envoyé """
+        send_maintenance_reminders()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Rappel d'entretien", mail.outbox[0].subject)

@@ -1,11 +1,29 @@
 from rest_framework import serializers
+
 from .models import Plant
 
 
 class PlantSerializer(serializers.ModelSerializer):
+    next_watering = serializers.SerializerMethodField()
+    next_fertilizing = serializers.SerializerMethodField()
+    next_repotting = serializers.SerializerMethodField()
+    next_pruning = serializers.SerializerMethodField()
+
     class Meta:
         model = Plant
         fields = '__all__'
+
+    def get_next_watering(self, obj):
+        return obj.next_watering()
+
+    def get_next_fertilizing(self, obj):
+        return obj.next_fertilizing()
+
+    def get_next_repotting(self, obj):
+        return obj.next_repotting()
+
+    def get_next_pruning(self, obj):
+        return obj.next_pruning()
 
     def validate_name(self, value):
         """ Vérifie que le nom est suffisamment long """
