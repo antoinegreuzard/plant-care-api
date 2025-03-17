@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Plant
+from .models import Plant, PlantPhoto
 from .helpers import get_personalized_advice
 
 
@@ -44,3 +44,9 @@ class PlantSerializer(serializers.ModelSerializer):
             data["created_at"] = instance.created_at.replace(
                 microsecond=0).isoformat().replace("+00:00", "Z")
         return data
+
+class PlantPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlantPhoto
+        fields = '__all__'
+        read_only_fields = ['uploaded_at']
