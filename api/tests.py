@@ -214,8 +214,8 @@ class PersonalizedAdviceTest(TestCase):
         advice = get_personalized_advice(self.plant)
 
         expected_advice = [
-            "Votre plante a besoin de lumière indirecte.",
-            "L'humidité est correcte."]
+            "Votre plante a besoin de lumière indirecte, évitez le soleil.",
+            "L'humidité est correcte, surveillez les signes de sécheresse."]
 
         for expected in expected_advice:
             self.assertIn(expected, advice)
