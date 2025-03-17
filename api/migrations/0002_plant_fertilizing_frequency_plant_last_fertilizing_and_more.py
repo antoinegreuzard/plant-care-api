@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('api', '0001_initial'),
     ]
@@ -13,41 +12,69 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='plant',
             name='fertilizing_frequency',
-            field=models.IntegerField(default=30, verbose_name='Fréquence de fertilisation (jours)'),
+            field=models.IntegerField(
+                default=30,
+                verbose_name='Fréquence de fertilisation (jours)'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='last_fertilizing',
-            field=models.DateField(blank=True, null=True, verbose_name='Dernière fertilisation'),
+            field=models.DateField(
+                blank=True,
+                null=True,
+                verbose_name='Dernière fertilisation'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='last_pruning',
-            field=models.DateField(blank=True, null=True, verbose_name='Dernière taille'),
+            field=models.DateField(
+                blank=True,
+                null=True,
+                verbose_name='Dernière taille'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='last_repotting',
-            field=models.DateField(blank=True, null=True, verbose_name='Dernier rempotage'),
+            field=models.DateField(
+                blank=True,
+                null=True,
+                verbose_name='Dernier rempotage'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='last_watering',
-            field=models.DateField(blank=True, null=True, verbose_name='Dernier arrosage'),
+            field=models.DateField(
+                blank=True,
+                null=True,
+                verbose_name='Dernier arrosage'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='pruning_frequency',
-            field=models.IntegerField(default=90, verbose_name='Fréquence de taille (jours)'),
+            field=models.IntegerField(
+                default=90,
+                verbose_name='Fréquence de taille (jours)'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='repotting_frequency',
-            field=models.IntegerField(default=365, verbose_name='Fréquence de rempotage (jours)'),
+            field=models.IntegerField(
+                default=365,
+                verbose_name='Fréquence de rempotage (jours)'
+            ),
         ),
         migrations.AddField(
             model_name='plant',
             name='watering_frequency',
-            field=models.IntegerField(default=7, verbose_name='Fréquence d’arrosage (jours)'),
+            field=models.IntegerField(
+                default=7,
+                verbose_name='Fréquence d’arrosage (jours)'
+            ),
         ),
     ]
