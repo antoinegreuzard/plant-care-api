@@ -1,3 +1,5 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
@@ -6,7 +8,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from .helpers import get_personalized_advice
-from .models import Plant
+from .models import Plant, PlantPhoto
 from .serializers import PlantSerializer
 from datetime import date, timedelta
 from .tasks import send_maintenance_reminders
@@ -219,3 +221,30 @@ class PersonalizedAdviceTest(TestCase):
 
         for expected in expected_advice:
             self.assertIn(expected, advice)
+
+
+class PlantPhotoTest(TestCase):
+    """ Teste l’upload des photos de plantes """
+
+    def setUp(self):
+        self.client = APIClient()
+        self.plant = Plant.objects.create(
+            name="Monstera",
+            sunlight_level="medium",
+            temperature=18,
+            humidity_level="medium"
+        )
+
+    def test_upload_photo(self):
+        """ Vérifie que l’upload de photo fonctionne """
+        url = reverse("plant-upload-photo", kwargs={"pk": self.plant.id})
+        image = SimpleUploadedFile(
+            "test.jpg",
+            b"file_content",
+            content_type="image/jpeg")
+
+        data = {"plant": self.plant.id, "image": image}
+        response = self.client.post(url, data, format="multipart")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(PlantPhoto.objects.filter(plant=self.plant).exists())

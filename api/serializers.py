@@ -45,6 +45,7 @@ class PlantSerializer(serializers.ModelSerializer):
                 microsecond=0).isoformat().replace("+00:00", "Z")
         return data
 
+
 class PlantPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantPhoto

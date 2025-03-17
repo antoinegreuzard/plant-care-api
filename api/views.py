@@ -22,6 +22,7 @@ class PlantDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PlantSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+
 class PlantPhotoUploadView(generics.CreateAPIView):
     queryset = PlantPhoto.objects.all()
     serializer_class = PlantPhotoSerializer
