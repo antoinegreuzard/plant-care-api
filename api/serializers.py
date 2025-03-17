@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Plant
+from .helpers import get_personalized_advice
 
 
 class PlantSerializer(serializers.ModelSerializer):
@@ -8,6 +9,7 @@ class PlantSerializer(serializers.ModelSerializer):
     next_fertilizing = serializers.SerializerMethodField()
     next_repotting = serializers.SerializerMethodField()
     next_pruning = serializers.SerializerMethodField()
+    advice = serializers.SerializerMethodField()
 
     class Meta:
         model = Plant
@@ -31,6 +33,9 @@ class PlantSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Le nom doit contenir au moins 3 caractères.")
         return value
+
+    def get_advice(self, obj):
+        return get_personalized_advice(obj)
 
     def to_representation(self, instance):
         """ Normalise `created_at` pour éviter les erreurs de test """

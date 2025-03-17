@@ -4,6 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+
+from .helpers import get_personalized_advice
 from .models import Plant
 from .serializers import PlantSerializer
 from datetime import date, timedelta
@@ -194,3 +196,26 @@ class MaintenanceReminderTest(TestCase):
         send_maintenance_reminders()
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("Rappel d'entretien", mail.outbox[0].subject)
+
+
+class PersonalizedAdviceTest(TestCase):
+    """ Teste la génération de conseils personnalisés """
+
+    def setUp(self):
+        self.plant = Plant.objects.create(
+            name="Monstera",
+            sunlight_level="medium",
+            temperature=18,
+            humidity_level="medium"
+        )
+
+    def test_generate_advice(self):
+        """ Vérifie que les conseils générés sont corrects """
+        advice = get_personalized_advice(self.plant)
+
+        expected_advice = [
+            "Votre plante a besoin de lumière indirecte, évitez le soleil.",
+            "L'humidité est correcte, surveillez les signes de sécheresse."]
+
+        for expected in expected_advice:
+            self.assertIn(expected, advice)

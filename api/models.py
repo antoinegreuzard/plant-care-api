@@ -12,6 +12,18 @@ class Plant(models.Model):
         ('tree', 'Arbre'),
     ]
 
+    SUNLIGHT_CHOICES = [
+        ('low', 'Faible'),
+        ('medium', 'Moyen'),
+        ('high', 'Élevé'),
+    ]
+
+    HUMIDITY_CHOICES = [
+        ('low', 'Sec'),
+        ('medium', 'Moyen'),
+        ('high', 'Humide'),
+    ]
+
     name = models.CharField(max_length=255, unique=True, verbose_name="Nom")
     variety = models.CharField(
         max_length=255,
@@ -34,7 +46,6 @@ class Plant(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Date d’ajout")
 
-    # Ajout des fréquences d'entretien
     watering_frequency = models.IntegerField(
         default=7, verbose_name="Fréquence d’arrosage (jours)")
     fertilizing_frequency = models.IntegerField(
@@ -52,6 +63,24 @@ class Plant(models.Model):
         blank=True, null=True, verbose_name="Dernier rempotage")
     last_pruning = models.DateField(
         blank=True, null=True, verbose_name="Dernière taille")
+
+    sunlight_level = models.CharField(
+        max_length=10,
+        choices=SUNLIGHT_CHOICES,
+        verbose_name="Ensoleillement",
+        default="medium"
+    )
+    temperature = models.FloatField(
+        verbose_name="Température (°C)",
+        null=True,
+        blank=True
+    )
+    humidity_level = models.CharField(
+        max_length=10,
+        choices=HUMIDITY_CHOICES,
+        verbose_name="Humidité",
+        default="medium"
+    )
 
     class Meta:
         ordering = ['-created_at']
