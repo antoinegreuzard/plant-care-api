@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/app
     environment:
-      - DJANGO_SETTINGS_MODULE=plantcare.settings
+      - DJANGO_SETTINGS_MODULE=config.settings
       - DATABASE_URL=postgres://plantcare:password@db:5432/plantcare
     depends_on:
       - db

@@ -9,12 +9,17 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier et installer les dépendances Python
-COPY requirements.txt requirements.txt
+# Copier uniquement les fichiers nécessaires pour installer les dépendances
+COPY requirements.txt .
+
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste du code
+# Copier tout le projet (y compris config/ et api/)
 COPY . .
+
+# Vérifier le contenu du dossier pour voir si config/ existe bien
+RUN ls -la /app
 
 # Exposer le port 8000
 EXPOSE 8000
