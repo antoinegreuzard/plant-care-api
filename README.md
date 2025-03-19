@@ -1,6 +1,6 @@
 # 🚀 Plant Care API
 
-Une API Django pour gérer un catalogue personnalisé de plantes avec des fonctionnalités avancées comme un calendrier d'entretien automatisé et un journal de suivi visuel.
+Une API Django pour gérer un catalogue personnalisé de plantes.
 
 ---
 
@@ -56,19 +56,6 @@ L'API est accessible sur `http://127.0.0.1:8000/api/`.
 |---------|----------------------------------|-----------------------------------|
 | `POST`  | `/api/plants/{id}/upload-photo/` | Ajouter une photo à une plante    |
 | `GET`   | `/api/plants/{id}/photos/`       | Récupérer les photos d’une plante |
-
-### 🔔 Rappels et notifications d'entretien
-
-| Méthode | Endpoint                      | Description                           |
-|---------|-------------------------------|---------------------------------------|
-| `GET`   | `/api/plants/{id}/reminders/` | Récupérer les prochains entretiens    |
-| `POST`  | `/api/plants/send-reminders/` | Envoyer des rappels par email (Admin) |
-
-### 📝 Conseils d’entretien personnalisés
-
-| Méthode | Endpoint                   | Description                        |
-|---------|----------------------------|------------------------------------|
-| `GET`   | `/api/plants/{id}/advice/` | Obtenir des conseils personnalisés |
 
 ---
 
