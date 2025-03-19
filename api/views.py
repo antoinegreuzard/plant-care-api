@@ -28,3 +28,13 @@ class PlantPhotoUploadView(generics.CreateAPIView):
     serializer_class = PlantPhotoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     parser_classes = (MultiPartParser, FormParser)
+
+
+class PlantPhotosListView(generics.ListAPIView):
+    serializer_class = PlantPhotoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        plant_id = self.kwargs['pk']
+        return PlantPhoto.objects.filter(
+            plant_id=plant_id).order_by('-uploaded_at')
