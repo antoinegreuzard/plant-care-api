@@ -1,6 +1,6 @@
 # 🚀 Plant Care API
 
-Une API Django pour gérer un catalogue personnalisé de plantes.
+Une API Django pour gérer un catalogue personnalisé de plantes et ses photos associés.
 
 ---
 
