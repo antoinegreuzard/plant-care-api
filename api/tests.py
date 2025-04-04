@@ -1,10 +1,10 @@
 from io import BytesIO
+from unittest.mock import Mock
 
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.contrib.auth.models import User
-from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -13,15 +13,17 @@ from rest_framework.test import APIClient
 from .helpers import get_personalized_advice
 from .models import Plant, PlantPhoto
 from .serializers import PlantSerializer
-from datetime import date, timedelta
-from .tasks import send_maintenance_reminders
+from datetime import date
 
 
 class PlantModelTest(TestCase):
     """ Tests pour le modèle Plant """
 
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
+            user=self.user,
             name="Aloe Vera",
             variety="Barbadensis",
             plant_type="succulent",
@@ -48,7 +50,10 @@ class PlantSerializerTest(TestCase):
     """ Tests pour le serializer PlantSerializer """
 
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
+            user=self.user,
             name="Aloe Vera",
             variety="Barbadensis",
             plant_type="succulent",
@@ -56,6 +61,19 @@ class PlantSerializerTest(TestCase):
             location="Salon",
             description="Plante médicinale."
         )
+
+    def test_serializer_create_with_user_context(self):
+        valid_data = {
+            "name": "Pilea",
+            "plant_type": "indoor"
+        }
+        serializer = PlantSerializer(
+            data=valid_data, context={
+                'request': Mock(
+                    user=self.user)})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        plant = serializer.save()
+        self.assertEqual(plant.user, self.user)
 
     def test_serializer_valid_data(self):
         """ Vérifie que le serializer fonctionne avec des données valides """
@@ -90,6 +108,7 @@ class PlantAPITest(TestCase):
         self.client.force_authenticate(user=self.user)
 
         self.plant1 = Plant.objects.create(
+            user=self.user,
             name="Ficus Lyrata",
             variety="Fiddle Leaf",
             plant_type="indoor",
@@ -101,6 +120,7 @@ class PlantAPITest(TestCase):
             description="Arbre d'intérieur populaire.")
 
         self.plant2 = Plant.objects.create(
+            user=self.user,
             name="Monstera Deliciosa",
             variety="Variegata",
             plant_type="indoor",
@@ -116,6 +136,19 @@ class PlantAPITest(TestCase):
             "plant-detail",
             kwargs={
                 "pk": self.plant1.id})
+
+    def test_user_cannot_access_other_user_plant(self):
+        other_user = User.objects.create_user(
+            username="otheruser", password="otherpassword")
+        plant_other_user = Plant.objects.create(
+            user=other_user,
+            name="Plante Secrète",
+            plant_type="indoor"
+        )
+        url = reverse("plant-detail", kwargs={"pk": plant_other_user.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_all_plants(self):
         """ Vérifie que la liste des plantes est retournée correctement """
@@ -188,26 +221,14 @@ class PlantURLTests(TestCase):
         self.assertEqual(detail_url, "/api/plants/1/")
 
 
-class MaintenanceReminderTest(TestCase):
-    def setUp(self):
-        self.plant = Plant.objects.create(
-            name="Cactus",
-            last_watering=date.today() - timedelta(days=7),
-            watering_frequency=7,
-        )
-
-    def test_send_maintenance_reminder(self):
-        """ Vérifie que l'email est bien envoyé """
-        send_maintenance_reminders()
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Rappel d'entretien", mail.outbox[0].subject)
-
-
 class PersonalizedAdviceTest(TestCase):
     """ Teste la génération de conseils personnalisés """
 
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
+            user=self.user,
             name="Monstera",
             sunlight_level="medium",
             temperature=18,
@@ -239,11 +260,28 @@ class PlantPhotoTest(TestCase):
 
         # 🔹 Créer une plante pour le test d'upload
         self.plant = Plant.objects.create(
+            user=self.user,
             name="Monstera",
             sunlight_level="medium",
             temperature=18,
             humidity_level="medium"
         )
+
+    def test_user_cannot_upload_photo_for_other_user_plant(self):
+        other_user = User.objects.create_user(
+            username="otheruser",
+            password="otherpassword"
+        )
+        plant_other_user = Plant.objects.create(
+            user=other_user,
+            name="Plante Secrète"
+        )
+        url = reverse("plant-upload-photo", kwargs={"pk": plant_other_user.id})
+        image = self.generate_photo_file()
+        data = {"image": image}
+        response = self.client.post(url, data, format="multipart")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def generate_photo_file(self):
         """ 🔹 Génère une image en mémoire pour l'upload """

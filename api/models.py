@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -81,6 +82,10 @@ class Plant(models.Model):
         verbose_name="Humidité",
         default="medium"
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='plantes')
 
     class Meta:
         ordering = ['-created_at']
