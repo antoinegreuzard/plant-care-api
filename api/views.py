@@ -1,7 +1,10 @@
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated
+)
 from rest_framework.pagination import PageNumberPagination
 from .models import Plant, PlantPhoto
 from .serializers import PlantSerializer, PlantPhotoSerializer
@@ -19,7 +22,8 @@ class PlantListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         # Restreint les plantes à l'utilisateur connecté s'il est authentifié
         if self.request.user.is_authenticated:
-            return Plant.objects.filter(user=self.request.user).order_by('-created_at')
+            return Plant.objects.filter(
+                user=self.request.user).order_by('-created_at')
         return Plant.objects.none()
 
     def perform_create(self, serializer):
@@ -45,7 +49,8 @@ class PlantPhotoUploadView(generics.CreateAPIView):
         try:
             plant = Plant.objects.get(pk=plant_id, user=self.request.user)
         except Plant.DoesNotExist:
-            raise PermissionDenied("Vous ne pouvez pas ajouter de photo à cette plante.")
+            raise PermissionDenied(
+                "Vous ne pouvez pas ajouter de photo à cette plante.")
 
         serializer.save(plant=plant)
 

@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('api', '0004_plantphoto'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -16,7 +15,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='plant',
             name='user',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='plantes', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='plantes',
+                to=settings.AUTH_USER_MODEL
+            ),
             preserve_default=False,
         ),
     ]

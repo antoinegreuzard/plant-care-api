@@ -82,7 +82,10 @@ class Plant(models.Model):
         verbose_name="Humidité",
         default="medium"
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='plantes')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='plantes')
 
     class Meta:
         ordering = ['-created_at']
@@ -95,28 +98,28 @@ class Plant(models.Model):
     def next_watering(self):
         """ Retourne la date du prochain arrosage """
         return self.last_watering + \
-               timedelta(days=self.watering_frequency) \
+            timedelta(days=self.watering_frequency) \
             if self.last_watering \
             else None
 
     def next_fertilizing(self):
         """ Retourne la date de la prochaine fertilisation """
         return self.last_fertilizing + \
-               timedelta(days=self.fertilizing_frequency) \
+            timedelta(days=self.fertilizing_frequency) \
             if self.last_fertilizing \
             else None
 
     def next_repotting(self):
         """ Retourne la date du prochain rempotage """
         return self.last_repotting + \
-               timedelta(days=self.repotting_frequency) \
+            timedelta(days=self.repotting_frequency) \
             if self.last_repotting \
             else None
 
     def next_pruning(self):
         """ Retourne la date de la prochaine taille """
         return self.last_pruning + \
-               timedelta(days=self.pruning_frequency) \
+            timedelta(days=self.pruning_frequency) \
             if self.last_pruning \
             else None
 

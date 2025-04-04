@@ -5,7 +5,6 @@ from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.contrib.auth.models import User
-from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -14,14 +13,15 @@ from rest_framework.test import APIClient
 from .helpers import get_personalized_advice
 from .models import Plant, PlantPhoto
 from .serializers import PlantSerializer
-from datetime import date, timedelta
+from datetime import date
 
 
 class PlantModelTest(TestCase):
     """ Tests pour le modèle Plant """
 
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
             user=self.user,
             name="Aloe Vera",
@@ -50,7 +50,8 @@ class PlantSerializerTest(TestCase):
     """ Tests pour le serializer PlantSerializer """
 
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
             user=self.user,
             name="Aloe Vera",
@@ -66,7 +67,10 @@ class PlantSerializerTest(TestCase):
             "name": "Pilea",
             "plant_type": "indoor"
         }
-        serializer = PlantSerializer(data=valid_data, context={'request': Mock(user=self.user)})
+        serializer = PlantSerializer(
+            data=valid_data, context={
+                'request': Mock(
+                    user=self.user)})
         self.assertTrue(serializer.is_valid(), serializer.errors)
         plant = serializer.save()
         self.assertEqual(plant.user, self.user)
@@ -134,7 +138,8 @@ class PlantAPITest(TestCase):
                 "pk": self.plant1.id})
 
     def test_user_cannot_access_other_user_plant(self):
-        other_user = User.objects.create_user(username="otheruser", password="otherpassword")
+        other_user = User.objects.create_user(
+            username="otheruser", password="otherpassword")
         plant_other_user = Plant.objects.create(
             user=other_user,
             name="Plante Secrète",
@@ -220,7 +225,8 @@ class PersonalizedAdviceTest(TestCase):
     """ Teste la génération de conseils personnalisés """
 
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword")
         self.plant = Plant.objects.create(
             user=self.user,
             name="Monstera",
@@ -262,7 +268,10 @@ class PlantPhotoTest(TestCase):
         )
 
     def test_user_cannot_upload_photo_for_other_user_plant(self):
-        other_user = User.objects.create_user(username="otheruser", password="otherpassword")
+        other_user = User.objects.create_user(
+            username="otheruser",
+            password="otherpassword"
+        )
         plant_other_user = Plant.objects.create(
             user=other_user,
             name="Plante Secrète"
