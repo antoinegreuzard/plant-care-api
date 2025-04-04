@@ -61,7 +61,7 @@ class PlantPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantPhoto
         fields = '__all__'
-        read_only_fields = ['uploaded_at']
+        read_only_fields = ['uploaded_at', 'plant']
 
     def create(self, validated_data):
         """ Ajoute la plante automatiquement depuis la requête """
