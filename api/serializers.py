@@ -13,7 +13,18 @@ class PlantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plant
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'variety', 'plant_type', 'purchase_date',
+            'location', 'description', 'created_at', 'watering_frequency',
+            'fertilizing_frequency', 'repotting_frequency', 'pruning_frequency',
+            'last_watering', 'last_fertilizing', 'last_repotting', 'last_pruning',
+            'sunlight_level', 'temperature', 'humidity_level', 'next_watering',
+            'next_fertilizing', 'next_repotting', 'next_pruning', 'advice'
+        ]
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
 
     def get_next_watering(self, obj):
         return obj.next_watering()
